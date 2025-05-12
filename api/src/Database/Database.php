@@ -12,21 +12,19 @@ class Database {
 
     public function __construct() {
 
-        $config = getenv();
-
         try {
 
             $this->pdo = new PDO(
 
-                "mysql:host=" . $config['DB_HOST'] . ";dbname=" . $config['DB_NAME'],
-                $config['DB_USER'],
-                $config['DB_PASS']
+                "mysql:host=" . $_ENV['DB_HOST'] . ";dbname=" . $_ENV['DB_NAME'],
+                $_ENV['DB_USER'],
+                $_ENV['DB_PASS']
             );
 
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
 
-            die("Erro ao conectar ao banco: " . $e->getMessage());
+            die("Error connecting to databse: " . $e->getMessage());
         }
     }
 
