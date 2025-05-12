@@ -1,0 +1,11 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /carousel-king/api
+
+    # Se for um arquivo ou pasta existente, não redireciona
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redireciona tudo para index.php
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
