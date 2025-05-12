@@ -20,8 +20,7 @@ $dotenv->load();
 
 $uri = str_replace('/' . $_ENV['PROJECT_FOLDER'] . '/', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
-// Util::fd($uri);
-// die();
+Api::cors();
 
 try {
 

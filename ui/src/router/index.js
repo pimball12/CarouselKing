@@ -1,17 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../components/Home.vue';
 import Login from '../components/Login.vue';
+import { useAuthStore } from '../stores/auth';
 
 const routes = [
 
     {
         path: '/',
-        name: 'hello-world',
+        name: 'home',
         component: Home
     },
     {
         path: '/login',
-        name: 'Login',
+        name: 'login',
         component: Login
     }
 ];
@@ -25,11 +26,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
 
-    const isAuthenticated = localStorage.getItem('token') !== null;
+    const authStore = useAuthStore();
+    const isAuthenticated = authStore.isAuthenticated();
 
-    if (to.name !== 'Login' && !isAuthenticated) {
+    if (to.name !== 'login' && !isAuthenticated) {
 
-        next({ name: 'Login' });
+        next({ name: 'login' });
     } else {
 
         next();
