@@ -35,6 +35,12 @@ class Api
                 $jwt = new JWTManager();
 
                 $content = $jwt->decode($token);
+
+                if ($content['exp'] < time()) {
+
+                    throw new \Exception('Token expired');
+                }
+
                 $this->user = $content;
             } catch (\Exception $e) {
 
@@ -117,7 +123,7 @@ class Api
         echo password_hash('secret', PASSWORD_BCRYPT);
     }
 
-    public function view($id = null)
+    public function read($id = null)
     {
         $this->assertMethod('GET');
 
@@ -154,7 +160,7 @@ class Api
         $this->response(true, 200, '', $companies);
     }
 
-    public function new()
+    public function create()
     {
         $this->assertMethod('POST');
 
@@ -179,8 +185,9 @@ class Api
 
         $db = new Database();
         $db->query("INSERT INTO $this->table (" . implode(',', $fields) . ") VALUES (" . implode(', ', $bound)  . ")", $values);
+        $id = $db->lastInsertId();
 
-        $this->response(true, 201, Util::toSingular($this->name) . ' created successfully');
+        $this->response(true, 201, Util::toSingular($this->name) . ' created successfully', ['id' => $id, ...$this->input]);
     }
 
     public function update($id = null)
@@ -199,8 +206,9 @@ class Api
         $db = new Database();
 
         $db->query("UPDATE $this->table SET " . implode(' = ?, ', $fields) . " = ? WHERE id = ?", [...$values, $id]);
+        $data = $db->query("SELECT * FROM $this->table WHERE id = ?", [$id])->fetch(PDO::FETCH_ASSOC);
 
-        $this->response(true, 200, Util::toSingular($this->name) . ' updated successfully');
+        $this->response(true, 200, Util::toSingular($this->name) . ' updated successfully', $data);
     }
 
     public function delete()

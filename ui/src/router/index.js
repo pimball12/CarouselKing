@@ -14,6 +14,20 @@ const routes = [
         path: '/login',
         name: 'login',
         component: Login
+    },
+    {
+        path: '/logout',
+        name: 'logout',
+        component: () => function () {
+            
+            const authStore = useAuthStore();
+            authStore.clearAuthData();
+        }
+    },
+    {
+        path: '/company/:id',
+        name: 'company',
+        component: () => import('../components/Company.vue'),
     }
 ];
 
@@ -28,6 +42,13 @@ router.beforeEach((to, from, next) => {
 
     const authStore = useAuthStore();
     const isAuthenticated = authStore.isAuthenticated();
+
+    if (to.name === 'logout') {
+     
+        console.log('Logging out...');
+        authStore.clearAuthData();
+        next({ name: 'login' });
+    }
 
     if (to.name !== 'login' && !isAuthenticated) {
 
