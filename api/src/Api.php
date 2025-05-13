@@ -9,10 +9,44 @@ use Src\Helpers\Util;
 
 class Api
 {
-    private function assertMethod(string|array $method)
+    protected $table;
+    protected $name;
+    protected $input = [];
+    protected $requiredFields = [];
+    protected $secured = false;
+    protected $belongsToUser = false;
+    protected $user = null;
+
+    public function __construct()
+    {
+        $this->input = json_decode(file_get_contents('php://input'), true);
+
+        if ($this->secured) {
+
+            try {
+
+                $token = JWTManager::getBearerToken();
+
+                if (!$token) {
+
+                    throw new \Exception('Unauthorized');
+                }
+
+                $jwt = new JWTManager();
+
+                $content = $jwt->decode($token);
+                $this->user = $content;
+            } catch (\Exception $e) {
+
+                $this->response(false, 401, 'Unauthorized');
+            }
+        }
+    }
+
+    protected function assertMethod(string|array $method)
     {
         if (!is_array($method)) {
-            
+
             $method = [$method];
         }
 
@@ -32,7 +66,7 @@ class Api
         }
     }
 
-    private function response($success = true, $code = 200, $message = '', $data = null)
+    protected function response($success = true, $code = 200, $message = '', $data = null)
     {
         http_response_code($code);
 
@@ -83,37 +117,105 @@ class Api
         echo password_hash('secret', PASSWORD_BCRYPT);
     }
 
-    public function login()
+    public function view($id = null)
     {
-        $this->assertMethod('POST');
-        $input = json_decode(file_get_contents('php://input'), true);
+        $this->assertMethod('GET');
+
+        if (!$id) {
+
+            $this->response(false, 400, 'Company ID is required');
+        }
 
         $db = new Database();
-        $user = $db->query("SELECT * FROM ck_users WHERE email = ?", [ $input['email'] ])->fetch(PDO::FETCH_ASSOC);
-        
-        if (!$user ) {
 
-            $this->response(false, 401, 'Invalid credentials');
+        $company = $db->query("SELECT * FROM $this->table WHERE id = ?", [$id])->fetch(PDO::FETCH_ASSOC);
+
+        if (!$company) {
+
+            $this->response(false, 404, Util::toSingular($this->name) . ' not found');
         }
-        
-        if (!password_verify($input['password'], $user['password'])) {
+
+        $this->response(true, 200, '', $company);
+    }
+
+    public function list()
+    {
+        $this->assertMethod('GET');
+
+        $db = new Database();
+
+        $companies = $db->query("SELECT * FROM $this->table")->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$companies) {
+
+            $this->response(false, 404, $this->name . ' not found');
+        }
+
+        $this->response(true, 200, '', $companies);
+    }
+
+    public function new()
+    {
+        $this->assertMethod('POST');
+
+        if ($this->belongsToUser)   {
             
-            $this->response(false, 401, 'Invalid credentials');
+            if (!$this->user) {
+
+                $this->response(false, 401, 'Unauthorized');
+            }
+
+            $this->input['user_id'] = $this->user['id'];
         }
 
-        $jwt = new JWTManager();
+        $fields = array_keys($this->input);
+        $values = array_values($this->input);
+        $bound = array_fill(0, count($values), '?');
 
-        $token = $jwt->encode([
+        if (!empty(array_diff($this->requiredFields, $fields))) {
 
-            'id' => $user['id'],
-            'email' => $user['email'],
-            'name' => $user['name']
-        ]);
+            $this->response(false, 400, 'Required fields: ' . implode(', ', $this->requiredFields));
+        }
 
-        $this->response(true, 200, 'Login successful', [
+        $db = new Database();
+        $db->query("INSERT INTO $this->table (" . implode(',', $fields) . ") VALUES (" . implode(', ', $bound)  . ")", $values);
 
-            'token' => $token,
-            'user' => $user
-        ]);
+        $this->response(true, 201, Util::toSingular($this->name) . ' created successfully');
+    }
+
+    public function update($id = null)
+    {
+        $this->assertMethod('PUT');
+
+        if (!$id) {
+
+            $this->response(false, 400, 'Company ID is required');
+        }
+
+        $fields = array_keys($this->input);
+        $values = array_values($this->input);
+        $bound = array_fill(0, count($values), '?');
+
+        $db = new Database();
+
+        $db->query("UPDATE $this->table SET " . implode(' = ?, ', $fields) . " = ? WHERE id = ?", [...$values, $id]);
+
+        $this->response(true, 200, Util::toSingular($this->name) . ' updated successfully');
+    }
+
+    public function delete()
+    {
+        $this->assertMethod('DELETE');
+
+        if (!$this->input['id']) {
+
+            $this->response(false, 400, 'Company ID is required');
+        }
+
+        $db = new Database();
+
+        $db->query("DELETE FROM $this->table WHERE id = ?", [$this->input['id']]);
+
+        $this->response(true, 200, Util::toSingular($this->name) . ' deleted successfully');
     }
 }

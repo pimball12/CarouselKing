@@ -1,37 +1,51 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/src/Api.php';
-require_once __DIR__ . '/src/Helpers/LocalStore.php';
-require_once __DIR__ . '/src/Helpers/Util.php';
-require_once __DIR__ . '/src/Database/Database.php';
-require_once __DIR__ . '/src/Auth/JWTManager.php';
+include_once 'core.php';
 
 use Src\Api;
-use Dotenv\Dotenv;
 use Src\Helpers\Util;
-
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-$uri = str_replace('/' . $_ENV['PROJECT_FOLDER'] . '/', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-
-Api::cors();
 
 try {
 
-    $reflection = new ReflectionMethod(Api::class, $uri);
+    if (trim($uri) == '') {
+
+        Util::fd('API is running..', true);
+    }
+
+    if (trim($uri) == 'test') {
+
+        (new Api())->test();
+        die();
+    }
+
+    $uri = explode('/', rtrim($uri, '/'));
+
+    if (count($uri) < 2) {
+
+        throw new Exception('Invalid route.');
+    }
+
+    $class = 'Src\\Controllers\\' . ucfirst(Util::toSingular($uri[0]));
+    $class = str_replace('-', '', ucwords($class, '-'));
+    $method = $uri[1]; 
+    $args = array_slice($uri, 2);
+    
+    // Util::fd([$class, $method, $args, class_exists($class)], true);
+
+    if (!class_exists($class)) {
+        
+        throw new Exception('Invalid route.');
+    }
+    
+    $reflection = new ReflectionMethod($class, $method);
 
     if ($reflection->isStatic() || !$reflection->isPublic()) {
 
         throw new Exception('Invalid route.');
     }
 
-    (new Api())->$uri();
+    (new $class())->$method(...$args);
+
 } catch (ReflectionException | Exception $e) {
 
     http_response_code(404);
