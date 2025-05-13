@@ -109,7 +109,7 @@ onMounted(() => {
             </form>
 
             <!-- Listagem de Empresas -->
-            <div v-if="loading" class="text-gray-500">Carregando empresas...</div>
+            <div v-if="loading" class="text-gray-500">Loading companies...</div>
             <div v-else class="overflow-auto max-h-[350px]">
                 <table class="min-w-full table-auto border-collapse shadow rounded-lg">
                     <thead>

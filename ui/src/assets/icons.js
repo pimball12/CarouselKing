@@ -27,7 +27,8 @@ import {
   faEnvelope,
   faBell,
   faLock,
-  faUnlock
+  faUnlock,
+  faEye
 } from '@fortawesome/free-solid-svg-icons'
 
 // Adiciona todos ao Font Awesome Core
@@ -56,5 +57,6 @@ library.add(
   faEnvelope,
   faBell,
   faLock,
-  faUnlock
+  faUnlock,
+  faEye
 )

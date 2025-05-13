@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { TransitionType, getTransitionTypeLabel } from '../Enums/TransitionType'
 import { Status, getStatusLabel } from '../Enums/Status';
 import CarouselModal from './CarouselModal.vue';
+import router from '../router';
 
 const API_URL = import.meta.env.VITE_API_URL;
 const loading = ref(true);
@@ -78,7 +79,8 @@ const modalSave = (carousel) =>  {
     if (modalCarouselId.value === 0) {
 
         carousels.value.push(carousel);
-        console.log(carousels.value);
+
+        modalCarouselId.value = carousel.id;
     } else {
 
         const index = carousels.value.findIndex(c => c.id === carousel.id);
@@ -87,9 +89,14 @@ const modalSave = (carousel) =>  {
 
             carousels.value[index] = carousel;
         }
-    }
 
-    modalCarouselId.value = null;
+        modalCarouselId.value = null;
+    }
+}
+
+const viewCarousel = (id) => {
+
+    router.push({name: 'carousel-view', params: {id: id}})
 }
 
 </script>
@@ -146,6 +153,9 @@ const modalSave = (carousel) =>  {
                                         class="text-blue-400 cursor-pointer">
                                         <FontAwesomeIcon icon="search"></FontAwesomeIcon>
                                     </button>
+                                    <button @click="viewCarousel(carousel.id)" class="text-green-400 cursor-pointer">
+                                        <FontAwesomeIcon icon="eye"></FontAwesomeIcon>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -158,6 +168,6 @@ const modalSave = (carousel) =>  {
         </div>
     </div>
 
-    <CarouselModal v-if="modalCarouselId !== null" v-model:carousel-id="modalCarouselId" @close="modalCarouselId = null" @save="modalSave" />
+    <CarouselModal v-if="modalCarouselId !== null" v-model:carousel-id="modalCarouselId" @close="modalCarouselId = null" @modalSave="modalSave" />
 
 </template>

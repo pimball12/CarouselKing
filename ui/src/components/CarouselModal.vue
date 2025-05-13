@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 const API_URL = import.meta.env.VITE_API_URL;
 const route = useRoute();
 const auth = useAuthStore();
-const emit = defineEmits(['close', 'save']);
+const emit = defineEmits(['close', 'modalSave']);
 const carouselId = defineModel('carouselId');
 const addMode = ref(false);
 
@@ -48,8 +48,7 @@ const submit = async () => {
                 headers: { Authorization: `Bearer ${auth.token}` }
             });
 
-            // form.value = response.data.data;
-            carouselId.value = response.data.data.id;
+            emit('modalSave', response.data.data);
         } else {
 
             const response = await axios.put(`${API_URL}/carousels/update/${carouselId.value}`, form.value, {
@@ -57,7 +56,7 @@ const submit = async () => {
                 headers: { Authorization: `Bearer ${auth.token}` }
             });
 
-            emit('save', response.data.data);
+            emit('modalSave', response.data.data);
         }
     } catch (error) {
 
@@ -142,31 +141,25 @@ async function handleFileUpload(event, field) {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
 
     if (carouselId.value !== 0) {
 
-        axios.get(`${API_URL}/carousels/read/${carouselId.value}`, {
+        let response;
+
+        response = await axios.get(`${API_URL}/carousels/read/${carouselId.value}`, {
 
             headers: { Authorization: `Bearer ${auth.token}` }
-        }).then(({ data }) => {
+        })
+        
+        form.value = response.data.data;
 
-            form.value = data.data;
-        }).catch(err => {
-
-            console.error('Error fetching carousel', err);
-        });
-
-        axios.get(`${API_URL}/carousel-items/list-by-carousel/${carouselId.value}`, {
+        response = await axios.get(`${API_URL}/carousel-items/list-by-carousel/${carouselId.value}`, {
 
             headers: { Authorization: `Bearer ${auth.token}` }
-        }).then(({ data }) => {
-
-            items.value = data.data;
-        }).catch(err => {
-
-            console.error('Error fetching carousel items', err);
-        });
+        })
+        
+        items.value = response.data.data;
     }
 });
 
