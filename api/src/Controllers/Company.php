@@ -3,8 +3,6 @@
 namespace Src\Controllers;
 
 use Src\Api;
-use Src\Auth\JWTManager;
-use Src\Helpers\Util;
 
 class Company extends Api
 {

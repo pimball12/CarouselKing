@@ -28,6 +28,7 @@ try {
     $class = 'Src\\Controllers\\' . ucfirst(Util::toSingular($uri[0]));
     $class = str_replace('-', '', ucwords($class, '-'));
     $method = $uri[1]; 
+    $method = str_replace('-', '', ucwords($method, '-'));
     $args = array_slice($uri, 2);
     
     // Util::fd([$class, $method, $args, class_exists($class)], true);

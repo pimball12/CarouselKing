@@ -9,7 +9,6 @@ import router from '../router';
 const API_URL = import.meta.env.VITE_API_URL;
 
 const auth = useAuthStore();
-const token = auth.token;
 
 const companies = ref([]);
 const loading = ref(true);
@@ -25,8 +24,10 @@ const fetchCompanies = async () => {
     try {
 
         const response = await axios.get(`${API_URL}/companies/list`, {
-            headers: { Authorization: `Bearer ${token}` }
+
+            headers: { Authorization: `Bearer ${auth.token}` }
         });
+
         companies.value = response.data.data;
     } catch (error) {
 
@@ -43,7 +44,7 @@ const submitCompany = async () => {
 
         const response = await axios.post(`${API_URL}/companies/create`, form.value, {
 
-            headers: { Authorization: `Bearer ${token}` }
+            headers: { Authorization: `Bearer ${auth.token}` }
         });
 
         companies.value.push(response.data.data);
@@ -61,7 +62,7 @@ const deleteCompany = async (id) => {
 
         await axios.delete(`${API_URL}/companies/delete`, {
 
-            headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${auth.token}` },
             data: { id }
         });
 
@@ -103,7 +104,7 @@ onMounted(() => {
                 </div>
                 <button type="submit"
                     class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">
-                    Register
+                    <FontAwesomeIcon icon="save"></FontAwesomeIcon> Register
                 </button>
             </form>
 

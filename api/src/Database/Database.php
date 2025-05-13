@@ -22,6 +22,7 @@ class Database {
             );
 
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
         } catch (PDOException $e) {
 
             die("Error connecting to databse: " . $e->getMessage());

@@ -6,11 +6,18 @@ import router from './router';
 
 <template>
 
-  <router-link v-if="router.currentRoute.value.name !== 'login'" to="/logout"
-    class="fixed top-4 right-4 px-4 py-2 bg-red-600 text-white rounded shadow hover:bg-red-700 font-semibold z-50">
-    Logout
-  </router-link>
+  <header class="bg-gray-400 text-white p-4 flex justify-between items-center">
+    <div class="text-lg font-semibold">
+      <a href="/" class="hover:underline">Home</a>
+    </div>
 
+    <router-link v-if="router.currentRoute.value.name !== 'login'" to="/logout"
+      class="text-white px-4 py-2 rounded">
+      Logout
+    </router-link>
+  </header>
+
+  
   <router-view></router-view>
 
 </template>

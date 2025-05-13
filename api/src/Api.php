@@ -134,14 +134,14 @@ class Api
 
         $db = new Database();
 
-        $company = $db->query("SELECT * FROM $this->table WHERE id = ?", [$id])->fetch(PDO::FETCH_ASSOC);
+        $row = $db->query("SELECT * FROM $this->table WHERE id = ?", [$id])->fetch(PDO::FETCH_ASSOC);
 
-        if (!$company) {
+        if (!$row) {
 
             $this->response(false, 404, Util::toSingular($this->name) . ' not found');
         }
 
-        $this->response(true, 200, '', $company);
+        $this->response(true, 200, '', $row);
     }
 
     public function list()
@@ -150,14 +150,14 @@ class Api
 
         $db = new Database();
 
-        $companies = $db->query("SELECT * FROM $this->table")->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $db->query("SELECT * FROM $this->table")->fetchAll(PDO::FETCH_ASSOC);
 
-        if (!$companies) {
+        if (!$rows) {
 
             $this->response(false, 404, $this->name . ' not found');
         }
 
-        $this->response(true, 200, '', $companies);
+        $this->response(true, 200, '', $rows);
     }
 
     public function create()
@@ -185,7 +185,7 @@ class Api
 
         $db = new Database();
         $db->query("INSERT INTO $this->table (" . implode(',', $fields) . ") VALUES (" . implode(', ', $bound)  . ")", $values);
-        $id = $db->lastInsertId();
+        $id = intval($db->lastInsertId());
 
         $this->response(true, 201, Util::toSingular($this->name) . ' created successfully', ['id' => $id, ...$this->input]);
     }

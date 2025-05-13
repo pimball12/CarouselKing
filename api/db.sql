@@ -53,12 +53,13 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `carousel_king`.`ck_carousel`
+-- Table `carousel_king`.`ck_carousels`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousel` (
+CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousels` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `company_id` INT UNSIGNED NOT NULL,
   `name` VARCHAR(255) NOT NULL,
+  `title` VARCHAR(255) NULL,
   `description` VARCHAR(1000) NULL,
   `status` ENUM('A', 'I') NOT NULL DEFAULT 'A' COMMENT 'A => Active, I => Inactive',
   `custom_css` TEXT NULL,
@@ -69,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousel` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_ck_carousel_ck_companies1_idx` (`company_id` ASC) VISIBLE,
-  CONSTRAINT `fk_ck_carousel_ck_companies1`
+  CONSTRAINT `fk_ck_carousels_ck_companies1`
     FOREIGN KEY (`company_id`)
     REFERENCES `carousel_king`.`ck_companies` (`id`)
     ON DELETE NO ACTION
@@ -78,9 +79,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `carousel_king`.`ck_carousel_item`
+-- Table `carousel_king`.`ck_carousels_itens`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousel_item` (
+CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousels_itens` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `carousel_id` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NULL,
@@ -95,9 +96,9 @@ CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousel_item` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
   INDEX `fk_ck_carousel_item_ck_carousel1_idx` (`carousel_id` ASC) VISIBLE,
-  CONSTRAINT `fk_ck_carousel_item_ck_carousel1`
+  CONSTRAINT `fk_ck_carousels_itens_ck_carousels1`
     FOREIGN KEY (`carousel_id`)
-    REFERENCES `carousel_king`.`ck_carousel` (`id`)
+    REFERENCES `carousel_king`.`ck_carousels` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
