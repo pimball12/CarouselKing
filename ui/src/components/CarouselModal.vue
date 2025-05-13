@@ -173,22 +173,22 @@ onMounted(async () => {
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium">Nome</label>
+                    <label class="block text-sm font-medium">Name</label>
                     <input v-model="form.name" class="w-full border rounded px-2 py-1" />
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium">Título</label>
+                    <label class="block text-sm font-medium">Title</label>
                     <input v-model="form.title" class="w-full border rounded px-2 py-1" />
                 </div>
 
                 <div class="col-span-2">
-                    <label class="block text-sm font-medium">Descrição</label>
+                    <label class="block text-sm font-medium">Description</label>
                     <textarea v-model="form.description" class="w-full border rounded px-2 py-1"></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium">Transição</label>
+                    <label class="block text-sm font-medium">Transition</label>
                     <select v-model="form.transition_type" class="w-full border rounded px-2 py-1">
                         <option value="S">Slide</option>
                         <option value="F">Fade</option>
@@ -197,7 +197,7 @@ onMounted(async () => {
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium">Duração</label>
+                    <label class="block text-sm font-medium">Duration</label>
                     <input type="number" v-model="form.transition_duration" class="w-full border rounded px-2 py-1" />
                 </div>
 
@@ -210,7 +210,7 @@ onMounted(async () => {
                 </div>
 
                 <div class="col-span-2">
-                    <label class="block text-sm font-medium">CSS Personalizado</label>
+                    <label class="block text-sm font-medium">Custom CSS</label>
                     <textarea v-model="form.custom_css" class="w-full border rounded px-2 py-1"></textarea>
                 </div>
             </div>
