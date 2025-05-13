@@ -79,9 +79,9 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `carousel_king`.`ck_carousels_itens`
+-- Table `carousel_king`.`ck_carousel_items`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousels_itens` (
+CREATE TABLE IF NOT EXISTS `carousel_king`.`ck_carousel_items` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `carousel_id` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NULL,

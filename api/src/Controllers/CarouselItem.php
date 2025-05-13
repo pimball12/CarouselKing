@@ -5,22 +5,21 @@ namespace Src\Controllers;
 use PDO;
 use Src\Api;
 use Src\Database\Database;
-use Src\Helpers\Util;
 
-class Carousel extends Api
+class CarouselItem extends Api
 {
-    protected $table = 'ck_carousels';
-    protected $name = 'Carousels';
-    protected $requiredFields = ['company_id', 'name'];
+    protected $table = 'ck_carousel_items';
+    protected $name = 'Items';
+    protected $requiredFields = ['carousel_id'];
     protected $secured = true;
 
-    public function listByCompany($companyId)
+    public function listByCarousel($carouselId)
     {
         $this->assertMethod('GET');
 
         $db = new Database();
 
-        $rows = $db->query("SELECT * FROM $this->table WHERE company_id = $companyId")->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $db->query("SELECT * FROM $this->table WHERE carousel_id = $carouselId")->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$rows) {
 

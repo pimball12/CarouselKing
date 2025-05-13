@@ -20,7 +20,11 @@ class Api
     public function __construct()
     {
         $this->input = json_decode(file_get_contents('php://input'), true);
+        $this->secure();
+    }
 
+    protected function secure()
+    {
         if ($this->secured) {
 
             try {
@@ -164,8 +168,8 @@ class Api
     {
         $this->assertMethod('POST');
 
-        if ($this->belongsToUser)   {
-            
+        if ($this->belongsToUser) {
+
             if (!$this->user) {
 
                 $this->response(false, 401, 'Unauthorized');
@@ -184,7 +188,8 @@ class Api
         }
 
         $db = new Database();
-        $db->query("INSERT INTO $this->table (" . implode(',', $fields) . ") VALUES (" . implode(', ', $bound)  . ")", $values);
+
+        $db->query("INSERT INTO $this->table (" . implode(',', array_map(fn($field) => "`$field`", $fields)) . ") VALUES (" . implode(', ', $bound)  . ")", $values);
         $id = intval($db->lastInsertId());
 
         $this->response(true, 201, Util::toSingular($this->name) . ' created successfully', ['id' => $id, ...$this->input]);

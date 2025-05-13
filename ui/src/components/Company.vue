@@ -61,7 +61,7 @@ const deleteCarousel = async (id) => {
         carousels.value = carousels.value.filter(c => c.id !== id);
     } catch (error) {
 
-        console.error('Erro ao excluir empresa:', error);
+        console.error('Error deleting carousel:', error);
     } finally {
 
         loading.value = false;
@@ -111,7 +111,7 @@ const modalSave = (carousel) =>  {
                 </div>
             </div>
 
-            <div v-if="loading" class="text-gray-500">Carregando empresas...</div>
+            <div v-if="loading" class="text-gray-500">Loading companies...</div>
             <div v-else>
                 <table class="min-w-full table-auto border-collapse shadow rounded-lg">
                     <thead>
@@ -150,7 +150,7 @@ const modalSave = (carousel) =>  {
                             </td>
                         </tr>
                         <tr v-if="carousels.length === 0">
-                            <td colspan="5" class="p-2 text-center">No carousels registered.</td>
+                            <td colspan="8" class="p-2 text-center">No carousels registered.</td>
                         </tr>
                     </tbody>
                 </table>
